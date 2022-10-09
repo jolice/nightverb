@@ -1,28 +1,29 @@
 version: '3'
 services:
-  slowcore-postgres:
+  nightverb-postgres:
     image: "postgres:9.6-alpine"
-    container_name: slowcore-postgres
+    container_name: nightverb-postgres
     volumes:
       - v_db:/var/lib/postgresql/data
     ports:
       - 5432:5432
     environment:
-      - POSTGRES_DB=slowcore
-      - POSTGRES_USER=slowcore
-      - POSTGRES_PASSWORD=slowcore
+      - POSTGRES_DB=nightverb
+      - POSTGRES_USER=nightverb
+      - POSTGRES_PASSWORD=nightverb
       - POSTGRES_HOST_AUTH_METHOD=trust
 
-  slowcore-backend:
+  nightverb-backend:
+    image: jolice/nightverb-backend:latest
     build: .
-    container_name: slowcore-backend
+    container_name: nightverb-backend
     stdin_open: true
     tty: true
     environment:
-      - DB_SERVER=slowcore-postgres
-      - DB_NAME=slowcore
-      - DB_USER=slowcore
-      - DB_PASSWORD=slowcore
+      - DB_SERVER=nightverb-postgres
+      - DB_NAME=nightverb
+      - DB_USER=nightverb
+      - DB_PASSWORD=nightverb
       - API_PORT=8082
       - YT_DLP_PATH=binary/yt-dlp_linux
       - SOX_PATH=/usr/bin/sox
@@ -31,20 +32,21 @@ services:
       - 5005:5005
       - 8888:8888
     links:
-      - slowcore-postgres
+      - nightverb-postgres
     volumes:
       - v_files:/app/base/work
 
-  slowcore-ui:
+  nightverb-ui:
+    image: jolice/nightverb-ui:latest
     build:
       context: ./frontend
       args:
         - VUE_APP_API_URL=http://localhost:8082
-    container_name: slowcore-ui
+    container_name: nightverb-ui
     ports:
       - 8080:8080
     links:
-      - slowcore-backend
+      - nightverb-backend
 volumes:
   v_db:
   v_files:

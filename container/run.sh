@@ -1,1 +1,1 @@
-java -cp lib/*:. ru.jolice.audio.Main
+java -cp lib/*:. ru.jolice.nightverb.Main
